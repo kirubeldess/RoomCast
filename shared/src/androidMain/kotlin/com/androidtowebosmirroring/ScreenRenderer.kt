@@ -14,7 +14,7 @@ import java.nio.ByteOrder
 import java.util.concurrent.atomic.AtomicBoolean
 
 /** All GL methods run on the dedicated rendering worker, separate from encoder output draining. */
-class ScreenRenderer : AutoCloseable {
+class ScreenRenderer(private val videoMode: Boolean = false) : AutoCloseable {
     private var eglDisplay = EGL14.EGL_NO_DISPLAY
     private var context = EGL14.EGL_NO_CONTEXT
     private var window = EGL14.EGL_NO_SURFACE
@@ -88,7 +88,13 @@ class ScreenRenderer : AutoCloseable {
     fun resize(width: Int, height: Int) {
         require(width > 0 && height > 0)
         sourceWidth = width; sourceHeight = height
-        viewport = fitViewport(width, height, outputWidth, outputHeight)
+        val inset = videoSideInset(width, height, videoMode)
+        viewport = if (inset > 0f) fitViewport(16, 9, outputWidth, outputHeight)
+            else fitViewport(width, height, outputWidth, outputHeight)
+        // Crop in logical capture coordinates before SurfaceTexture's rotation/flip transform.
+        coordinates.position(0)
+        coordinates.put(floatArrayOf(inset, 0f, 1f - inset, 0f, inset, 1f, 1f - inset, 1f))
+        coordinates.position(0)
         texture?.setDefaultBufferSize(width, height)
         haveFrame = false
     }

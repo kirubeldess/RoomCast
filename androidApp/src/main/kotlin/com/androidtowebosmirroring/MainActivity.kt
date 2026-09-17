@@ -20,6 +20,7 @@ class MainActivity : ComponentActivity() {
     private var pending: Receiver? = null
     private var captureAudio = true
     private var quality = 720
+    private var videoMode = false
     private val networkPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) scan() else MirrorSession.update { it.copy(message = "Allow local network access to find and connect to your TV.") }
     }
@@ -30,7 +31,7 @@ class MainActivity : ComponentActivity() {
             try {
                 startForegroundService(Intent(this, MirrorService::class.java).putExtra("consent", result.data)
                     .putExtra("id", tv.id).putExtra("name", tv.name).putExtra("url", tv.controlUrl).putExtra("type", tv.serviceType)
-                    .putExtra("audio", captureAudio).putExtra("quality", quality))
+                    .putExtra("audio", captureAudio).putExtra("quality", quality).putExtra("videoMode", videoMode))
             } catch (e: Exception) { MirrorSession.update { it.copy(message = "Cannot start mirroring: ${e.message}") } }
         } else MirrorSession.update { it.copy(message = "Screen sharing was cancelled. Nothing is being captured.") }
     }
@@ -63,11 +64,14 @@ class MainActivity : ComponentActivity() {
         savedInstanceState?.getStringArray("pending")?.let { pending = Receiver(it[0], it[1], "DLNA", it[2], it[3]) }
         captureAudio = savedInstanceState?.getBoolean("audio", true) ?: true
         quality = savedInstanceState?.getInt("quality", 720) ?: 720
+        videoMode = savedInstanceState?.getBoolean("videoMode", false) ?: false
 
         setContent {
-            App(MirrorSession.state, onScan = ::scan, onStart = { tv, audio, resolution ->
+            App(MirrorSession.state, captureAvailable = true,
+                maxVideoHeight = resources.displayMetrics.let { minOf(it.widthPixels, it.heightPixels) },
+                onScan = ::scan, onStart = { tv, audio, resolution, cropVideo ->
                 if (pending == null && !MirrorSession.state.active) {
-                    pending = tv; captureAudio = audio; quality = resolution
+                    pending = tv; captureAudio = audio; quality = resolution; videoMode = cropVideo
                     if (audio && checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
                         audioPermission.launch(Manifest.permission.RECORD_AUDIO)
                     else prepareCapture()
@@ -78,6 +82,7 @@ class MainActivity : ComponentActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         pending?.let { outState.putStringArray("pending", arrayOf(it.id, it.name, it.controlUrl, it.serviceType)) }
         outState.putBoolean("audio", captureAudio); outState.putInt("quality", quality)
+        outState.putBoolean("videoMode", videoMode)
         super.onSaveInstanceState(outState)
     }
     override fun onDestroy() { discovery?.close(); MirrorSession.update { it.copy(scanning = false) }; super.onDestroy() }

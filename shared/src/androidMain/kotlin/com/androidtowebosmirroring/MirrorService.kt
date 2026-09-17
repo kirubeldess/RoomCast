@@ -115,7 +115,7 @@ class MirrorService : Service() {
         if (supportsCbr) videoFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR)
         encoder.configure(videoFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
         surface = encoder.createInputSurface(); encoder.start()
-        renderer = ScreenRenderer()
+        renderer = ScreenRenderer(intent.getBooleanExtra("videoMode", false))
         renderWorker.submit {
             try { renderer!!.initialize(surface!!, width, height, captureWidth, captureHeight) }
             catch (e: Exception) { renderer!!.close(); renderer = null; throw e }

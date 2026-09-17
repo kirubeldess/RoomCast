@@ -3,6 +3,16 @@ package com.androidtowebosmirroring
 import kotlin.test.*
 
 class CaptureTimingTest {
+    @Test fun videoModeRemovesOnlyCenteredSixteenByNineSideAreas() {
+        val inset = videoSideInset(1600, 720, true)
+        assertEquals(0.1f, inset, 0.00001f)
+        assertEquals(1280f, 1600 * (1 - 2 * inset), 0.001f)
+        assertEquals(0f, videoSideInset(1600, 720, false))
+        assertEquals(0f, videoSideInset(720, 1600, true))
+        assertEquals(0f, videoSideInset(1280, 720, true))
+        assertEquals(0f, videoSideInset(960, 720, true))
+        assertFailsWith<IllegalArgumentException> { videoSideInset(0, 720, true) }
+    }
     @Test fun rotationFitsLandscapeWithoutChangingTvResolution() {
         val portrait = fitViewport(720, 1600, 1280, 720)
         assertEquals(VideoViewport(478, 0, 324, 720), portrait)

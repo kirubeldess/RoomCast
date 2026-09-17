@@ -2,6 +2,12 @@ package com.androidtowebosmirroring
 
 data class VideoViewport(val x: Int, val y: Int, val width: Int, val height: Int)
 
+fun videoSideInset(sourceWidth: Int, sourceHeight: Int, videoMode: Boolean): Float {
+    require(sourceWidth > 0 && sourceHeight > 0)
+    if (!videoMode || sourceWidth.toDouble() / sourceHeight <= 16.0 / 9.0) return 0f
+    return ((1.0 - sourceHeight * (16.0 / 9.0) / sourceWidth) / 2.0).toFloat()
+}
+
 fun fitViewport(sourceWidth: Int, sourceHeight: Int, outputWidth: Int, outputHeight: Int): VideoViewport {
     require(sourceWidth > 0 && sourceHeight > 0 && outputWidth > 0 && outputHeight > 0)
     val scale = minOf(outputWidth.toDouble() / sourceWidth, outputHeight.toDouble() / sourceHeight)
@@ -10,7 +16,6 @@ fun fitViewport(sourceWidth: Int, sourceHeight: Int, outputWidth: Int, outputHei
     return VideoViewport((outputWidth - width) / 2, (outputHeight - height) / 2, width, height)
 }
 
-/** Map capture frame positions to the same monotonic microsecond clock as video. */
 class AudioCaptureClock(private val startUs: Long, private val sampleRate: Int = 48000) {
     private var offsetUs = startUs
     private var lastPtsUs = Long.MIN_VALUE
@@ -28,7 +33,6 @@ class AudioCaptureClock(private val startUs: Long, private val sampleRate: Int =
     }
 }
 
-/** Missed render deadlines are skipped, never rendered as a burst of catch-up frames. */
 class FrameCadence(private val intervalNs: Long = 1_000_000_000L / 30) {
     init { require(intervalNs > 0) }
     private var nextNs: Long? = null
