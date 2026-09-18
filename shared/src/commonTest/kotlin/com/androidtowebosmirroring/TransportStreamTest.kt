@@ -1,5 +1,7 @@
 package com.androidtowebosmirroring
 
+import com.androidtowebosmirroring.domain.media.TransportStream
+
 import kotlin.test.*
 
 class TransportStreamTest {

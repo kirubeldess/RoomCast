@@ -1,5 +1,7 @@
 package com.androidtowebosmirroring
 
+import com.androidtowebosmirroring.domain.media.*
+
 import kotlin.test.*
 
 class CaptureTimingTest {

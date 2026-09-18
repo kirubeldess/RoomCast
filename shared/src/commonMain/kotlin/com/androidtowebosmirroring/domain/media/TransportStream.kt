@@ -1,4 +1,4 @@
-package com.androidtowebosmirroring
+package com.androidtowebosmirroring.domain.media
 
 /** Live MPEG-TS muxer: H.264 Annex B, AAC ADTS, 90 kHz timestamps. */
 class TransportStream(private val audio: Boolean, private val emit: (ByteArray) -> Unit, private val packetsPerBatch: Int = 1) {

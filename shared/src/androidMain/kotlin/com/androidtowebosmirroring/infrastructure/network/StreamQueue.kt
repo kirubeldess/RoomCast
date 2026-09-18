@@ -1,4 +1,4 @@
-package com.androidtowebosmirroring
+package com.androidtowebosmirroring.infrastructure.network
 
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit

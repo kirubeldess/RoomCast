@@ -1,4 +1,6 @@
-package com.androidtowebosmirroring
+package com.androidtowebosmirroring.infrastructure.network
+
+import com.androidtowebosmirroring.domain.Receiver
 
 import java.net.*
 import java.util.UUID

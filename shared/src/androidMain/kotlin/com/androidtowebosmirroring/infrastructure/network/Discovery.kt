@@ -1,4 +1,7 @@
-package com.androidtowebosmirroring
+package com.androidtowebosmirroring.infrastructure.network
+
+import com.androidtowebosmirroring.domain.Receiver
+import com.androidtowebosmirroring.domain.ReceiverDiscovery
 
 import android.content.Context
 import android.net.nsd.NsdManager
@@ -85,14 +88,14 @@ object Dlna {
     }
 }
 
-class Discovery(context: Context, private val found: (Receiver) -> Unit, private val done: (String) -> Unit) : AutoCloseable {
+class Discovery(context: Context, private val found: (Receiver) -> Unit, private val done: (String) -> Unit) : ReceiverDiscovery {
     private val nsd = context.getSystemService(NsdManager::class.java)
     private val wifi = context.applicationContext.getSystemService(WifiManager::class.java)
     private val executor = Executors.newSingleThreadExecutor()
     private val listeners = mutableListOf<NsdManager.DiscoveryListener>()
     @Volatile private var closed = false
     @Volatile private var socket: DatagramSocket? = null
-    fun start() {
+    override fun start() {
         listOf("_airplay._tcp." to "AirPlay", "_googlecast._tcp." to "Google Cast").forEach { (type, label) ->
             val listener = object : NsdManager.DiscoveryListener {
                 override fun onDiscoveryStarted(t: String) {}

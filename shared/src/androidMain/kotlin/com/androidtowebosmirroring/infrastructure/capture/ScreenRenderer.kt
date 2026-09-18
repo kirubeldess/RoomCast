@@ -1,4 +1,6 @@
-package com.androidtowebosmirroring
+package com.androidtowebosmirroring.infrastructure.capture
+
+import com.androidtowebosmirroring.domain.media.*
 
 import android.graphics.SurfaceTexture
 import android.opengl.EGL14

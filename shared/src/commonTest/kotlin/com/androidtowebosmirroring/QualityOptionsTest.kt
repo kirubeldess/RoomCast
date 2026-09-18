@@ -1,5 +1,7 @@
 package com.androidtowebosmirroring
 
+import com.androidtowebosmirroring.domain.availableQualities
+
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

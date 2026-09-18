@@ -6,7 +6,16 @@ Roomcast mirrors your Android screen and supported internal audio to compatible 
 
 **Desktop coming soon.** Desktop screen mirroring is planned; the current desktop app provides a shared UI preview only. Capture and streaming are currently Android-only.
 
-Well compatable with a National **webOS TV**. 
+## Screenshots
+
+<p>
+  <img src="docs/pictures/picture_one.png" alt="Roomcast TV selection, internal audio, and video quality controls" width="280" />
+  <img src="docs/pictures/picture_two.png" alt="Roomcast picture settings with Fit screen and 16:9 video options" width="280" />
+</p>
+
+## TV compatibility
+
+Well compatable with a **webOS TV**.
 
 **Android TV** may also work if it provides a compatible DLNA receiver, built-in Chromecast alone is not enough.
 
@@ -74,15 +83,7 @@ The native popup wording, PigeonCast receiver label, exact TV model/firmware, an
 
 ## Implementation
 
-- `shared/commonMain`: Compose connection screen, receiver/session models, quality controls, and an MPEG-TS muxer with PAT/PMT, PCR/PTS, H.264 PES and AAC ADTS framing.
-- `shared/androidMain/Discovery.kt`: SSDP discovery, AirPlay/Cast NSD identification, bounded XML descriptions, and AVTransport SOAP actions.
-- `shared/androidMain/LiveServer.kt`: session-scoped HTTP server bound to the route toward the TV. Only the selected TV address can read a random session URL. New clients wait for a keyframe; slow clients are disconnected; encoded buffers are bounded and kept in memory.
-- `shared/androidMain/MirrorService.kt`: MediaProjection foreground service, hardware H.264/AAC encoding, AudioPlaybackCapture, stream delivery and cleanup.
-- `shared/androidMain/ScreenRenderer.kt`: SurfaceTexture/EGL composition with automatic capture resizing, aspect-preserving landscape output, and bounded render cadence.
-- `androidApp`: runtime permissions and Android's per-session screen-capture approval flow.
-- iOS and desktop retain the shared UI entry point; capture and transport are Android-only.
-
-Traffic uses unencrypted local HTTP because native DLNA receivers commonly require it. Use a trusted local network. There is no persistent screen recording or analytics. The Android permission named `INTERNET` is needed for local sockets even when the network is offline.
+Traffic uses unencrypted local HTTP. Use a trusted local network. There is no persistent screen recording or analytics.
 
 ## Verification
 

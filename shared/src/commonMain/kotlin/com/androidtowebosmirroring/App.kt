@@ -1,5 +1,9 @@
 package com.androidtowebosmirroring
 
+import com.androidtowebosmirroring.domain.Receiver
+import com.androidtowebosmirroring.domain.availableQualities
+import com.androidtowebosmirroring.presentation.MirrorState
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -24,19 +28,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-data class Receiver(val id: String, val name: String, val protocol: String, val controlUrl: String = "", val serviceType: String = "")
-data class MirrorState(val receivers: List<Receiver> = emptyList(), val scanning: Boolean = false,
-    val active: Boolean = false, val message: String = "Connect your phone and TV to the same network.",
-    val diagnostics: String = "")
-
 private val Ink = Color(0xFF142C46)
 private val Blue = Color(0xFF245CC7)
 private val Mist = Color(0xFFEDF2F8)
 private val Muted = Color(0xFF536478)
 private val Line = Color(0xFFD5DFEC)
 private val Sky = Color(0xFFBFD7FF)
-
-fun availableQualities(maxHeight: Int): List<Int> = listOf(480, 720, 1080).filter { it <= maxHeight }
 
 @Composable
 fun App(state: MirrorState = MirrorState(message = "Screen capture is available in the Android app."),

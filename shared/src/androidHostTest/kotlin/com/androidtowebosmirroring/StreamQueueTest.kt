@@ -1,5 +1,7 @@
 package com.androidtowebosmirroring
 
+import com.androidtowebosmirroring.infrastructure.network.StreamQueue
+
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.Executors
 import kotlin.test.*
